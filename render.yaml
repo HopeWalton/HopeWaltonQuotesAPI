@@ -1,0 +1,12 @@
+services:
+  - name: php-api
+    type: web
+    runtime: docker
+    repo: https://github.com/HopeWalton/HopeWaltonQuotesAPI
+    plan: free
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: DATABASE_URL
+        value: postgres://postgres:postgres@localhost:5432/quotesdb
+    autoDeploy: true
