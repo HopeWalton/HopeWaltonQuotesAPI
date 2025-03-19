@@ -9,9 +9,7 @@
         header('Access-Control-Allow-Headers: Origin, Accept, Content-Type, X-Requested-With');
         exit();
     }
-    
-    // TEST
-    echo json_encode(['message' => 'API is working']);
+
 
     switch($method) {
         case 'GET':

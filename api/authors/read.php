@@ -35,5 +35,5 @@
         // Turn to json
         echo json_encode($author_array);
     } else {
-        echo json_encode(array('message'=> 'No authors found'));
+        echo json_encode(array('message'=> 'author_id Not Found'));
     }

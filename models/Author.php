@@ -80,13 +80,13 @@
             // Bind data
             $stmt->bindParam(':author', $this->author, PDO::PARAM_STR);
 
-            //Execute query
-            if($stmt->execute()){
-                return true;
+           // Execute query
+            if ($stmt->execute()) {
+                // Get the last inserted ID in PostgreSQL
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                return $row['id'];
             }
 
-            //Print error if something goes wrong
-            printf("Error: %s.\n", $stmt->error);
             return false;
         }
 

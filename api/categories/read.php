@@ -31,6 +31,6 @@
 
         echo json_encode($cat_array);
     } else {
-        echo json_encode(array('message'=> 'No categories found'));
+        echo json_encode(array('message'=> 'category_id Not Found'));
     }
    
