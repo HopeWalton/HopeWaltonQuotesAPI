@@ -15,10 +15,10 @@ RUN a2enmod rewrite
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy all project files to the container
+# Copy all project files into the container
 COPY . /var/www/html/
 
-# Ensure Apache serves index.php
+# Ensure Apache serves index.php by default
 RUN echo "<IfModule mod_dir.c>\n    DirectoryIndex index.php index.html\n</IfModule>" \
     > /etc/apache2/mods-enabled/dir.conf
 
