@@ -1,33 +1,42 @@
 <?php
 
-    include_once '../../config/Database.php';
-    include_once '../../models/Category.php';
+include_once '../../config/Database.php';
+include_once '../../models/Category.php';
 
-    // Instantiate DB and Connect
+header('Content-Type: application/json');
+
+try {
     $database = new Database();
     $db = $database->connect();
-
-    // Create new category object
     $category = new Category($db);
 
-    // Get raw posted data
     $data = json_decode(file_get_contents("php://input"));
 
     // Ensure ID is provided
     if (!isset($data->id)) {
-        echo json_encode(['message' => 'ID is required']);
+        echo json_encode(["message" => "Missing Required Parameters"]);
+        exit();
+    }
+
+    // Check if Category Exists Before Deleting
+    $check_category_query = "SELECT id FROM categories WHERE id = :id";
+    $stmt = $db->prepare($check_category_query);
+    $stmt->bindParam(':id', $data->id, PDO::PARAM_INT);
+    $stmt->execute();
+    if ($stmt->rowCount() == 0) {
+        echo json_encode(["message" => "No Categories Found"]);
         exit();
     }
 
     // Set ID to delete
     $category->id = $data->id;
 
-    if($category->delete()){
-        echo json_encode(
-            array('message' => 'category Deleted')
-        );
+    if ($category->delete()) {
+        echo json_encode(["id" => $category->id]);  // 👈 Return ID instead of a message
     } else {
-        echo json_encode(
-            array('message'=> 'category Not Deleted')
-        );
+        echo json_encode(["message" => "Category Not Deleted"]);
     }
+
+} catch (Exception $e) {
+    echo json_encode(["error" => $e->getMessage()]);
+}
