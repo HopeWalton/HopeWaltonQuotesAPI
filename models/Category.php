@@ -81,34 +81,28 @@
             return false;
         }
 
-        public function update(){
-            $query = 'UPDATE ' . $this->table . '
-                        SET 
-                            category = :category 
-                        WHERE 
-                            id = :id';
-
-            // Prepare
+        public function update() {
+            $query = 'UPDATE ' . $this->table . ' 
+                      SET category = :category 
+                      WHERE id = :id';
+        
             $stmt = $this->conn->prepare($query);
-
-            //Clean the data
+        
+            // Clean data
             $this->category = htmlspecialchars(strip_tags($this->category));
             $this->id = htmlspecialchars(strip_tags($this->id));
-
+        
             // Bind data
-            $stmt->bindParam(':category', $this->category);
-            $stmt->bindParam(':id', $this->id);
-
-            //Execute query
-           if($stmt->execute()){
-            return true;
-        }
-
-            //Print error if something goes wrong
-            printf("Error: %s.\n", $stmt->error);
+            $stmt->bindParam(':category', $this->category, PDO::PARAM_STR);
+            $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
+        
+            if ($stmt->execute()) {
+                return true;
+            }
+        
             return false;
-
         }
+        
 
         // Delete a category
         public function delete() {

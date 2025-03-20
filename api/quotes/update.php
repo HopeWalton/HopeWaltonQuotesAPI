@@ -24,6 +24,16 @@ try {
         exit();
     }
 
+    // Ensure the quote exists before updating
+    $check_quote_query = "SELECT id FROM quotes WHERE id = :id";
+    $stmt = $db->prepare($check_quote_query);
+    $stmt->bindParam(':id', $data->id, PDO::PARAM_INT);
+    $stmt->execute();
+    if ($stmt->rowCount() == 0) {
+        echo json_encode(["message" => "No Quotes Found"]);
+        exit();
+    }
+
     // Validate if Author ID exists
     $check_author_query = "SELECT id FROM authors WHERE id = :author_id";
     $stmt = $db->prepare($check_author_query);
@@ -60,7 +70,7 @@ try {
         ]);
         exit();
     } else {
-        echo json_encode(["message" => "No Quotes Found"]);
+        echo json_encode(["message" => "Quote Not Updated"]); // 👈 Change from "No Quotes Found"
         exit();
     }
 
