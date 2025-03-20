@@ -19,7 +19,7 @@
     // Check if there are any authors
     if($num > 0) {
         // Create Array
-        $author_array = ['data' => []];
+        $author_array = [];
 
         while($row = $result->fetch(PDO::FETCH_ASSOC)) {
             extract($row);
@@ -29,7 +29,7 @@
                 'author' => $author
             );
 
-            array_push($author_array['data'], $author_item);
+            $author_array[] = $author_item;
         }
 
         // Turn to json
