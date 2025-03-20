@@ -9,7 +9,7 @@ This is a RESTful API built with PHP and PostgreSQL that allows users to manage 
 ✅ Foreign key constraints to maintain database integrity.  
 
 ## 🌐 Live API on Render
-[Quotes API - Live Deployment](https://hopewaltonquotesapi.onrender.com)
+- https://hopewaltonquotesapi.onrender.com/
 
 ## Technologies Used
 - **Backend:** PHP (with Apache)
