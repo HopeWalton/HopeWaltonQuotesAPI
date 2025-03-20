@@ -50,12 +50,21 @@ try {
 
     // Create the quote
     if ($quote->create()) {
+        $newId = $db->lastInsertId();
+    
+        if (!$newId) {
+            echo json_encode(["error" => "Could not retrieve last inserted ID"]);
+            exit();
+        }
+    
+        // Ensure correct response format
         echo json_encode([
-            "id" => $db->lastInsertId(),
+            "id" => (int) $newId,  
             "quote" => $quote->quote,
-            "author_id" => $quote->author_id,
-            "category_id" => $quote->category_id
+            "author_id" => (int) $quote->author_id,
+            "category_id" => (int) $quote->category_id
         ]);
+        exit();
     } else {
         echo json_encode(["message" => "Quote Not Created"]);
     }
