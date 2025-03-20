@@ -1,35 +1,46 @@
 <?php
 
-    include_once '../../config/Database.php';
-    include_once '../../models/Author.php';
+include_once '../../config/Database.php';
+include_once '../../models/Author.php';
 
-    // Instantiate DB and Connect
+header('Content-Type: application/json');
+
+try {
     $database = new Database();
     $db = $database->connect();
-
-    // Instantiate Author object
     $author = new Author($db);
 
-    // Get raw posted data
     $data = json_decode(file_get_contents("php://input"));
 
-    // Ensure ID and Author are provided
-    if (!isset($data->id) || !isset($data->author)) {
-        echo json_encode(['message' => 'ID and Author are required']);
+    // Check for valid JSON input
+    if (!$data) {
+        echo json_encode(["error" => "Invalid JSON input"]);
         exit();
     }
 
-    // Set ID to update
-    $author->id = $data->id;
-    $author->author = $data->author;
-    
-    //Update Author
-    if($author->update()){
-        echo json_encode(
-            array('message' => 'Author Updated')
-        );
-    } else {
-        echo json_encode(
-            array('message' => 'Author Not Updated')
-        );
+    // Ensure ID and Author are provided
+    if (!isset($data->id) || !isset($data->author)) {
+        echo json_encode(["message" => "Missing Required Parameters"]);
+        exit();
     }
+
+    // Assign Data to Author Object
+    $author->id = (int) $data->id;
+    $author->author = $data->author;
+
+    // Perform Update
+    if ($author->update()) {
+        echo json_encode([
+            "id" => $author->id,
+            "author" => $author->author
+        ]);
+        exit();
+    } else {
+        echo json_encode(["message" => "Author Not Updated"]);
+        exit();
+    }
+
+} catch (Exception $e) {
+    echo json_encode(["error" => $e->getMessage()]);
+    exit();
+}

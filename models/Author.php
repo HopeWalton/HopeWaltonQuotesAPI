@@ -85,33 +85,28 @@
         }
         
 
-        public function update(){
-            $query = 'UPDATE ' . $this->table . '
-            SET 
-                author = :author
-            WHERE 
-                id = :id';
-
-            // Prepare Statement
+        public function update() {
+            $query = 'UPDATE ' . $this->table . ' 
+                      SET author = :author 
+                      WHERE id = :id';
+        
             $stmt = $this->conn->prepare($query);
-
-            // Clean the data
+        
+            // Clean data
             $this->author = htmlspecialchars(strip_tags($this->author));
             $this->id = htmlspecialchars(strip_tags($this->id));
-
-            // Bind
-            $stmt->bindParam(':author', $this->author);
-            $stmt->bindParam(':id', $this->id);
-
-           //Execute query
-           if($stmt->execute()){
-            return true;
-        }
-
-            //Print error if something goes wrong
-            printf("Error: %s.\n", $stmt->error);
+        
+            // Bind data
+            $stmt->bindParam(':author', $this->author, PDO::PARAM_STR);
+            $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
+        
+            if ($stmt->execute()) {
+                return true;
+            }
+        
             return false;
         }
+        
 
         public function delete() {
             $query = 'DELETE FROM ' . $this->table . '

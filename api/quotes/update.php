@@ -60,7 +60,7 @@ try {
         ]);
         exit();
     } else {
-        echo json_encode(["message" => "Quote Not Updated"]);
+        echo json_encode(["message" => "No Quotes Found"]);
         exit();
     }
 
