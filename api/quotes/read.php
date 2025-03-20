@@ -22,7 +22,7 @@
     if($num>0) {
 
         // Create Array
-        $quotes_array = ['data' => []];
+        $quotes_array = [];
 
         while($row = $result->fetch(PDO::FETCH_ASSOC)) {
             extract($row);
@@ -34,10 +34,10 @@
                 'category' => $category
             );
 
-            array_push($quotes_array['data'], $quote_item);
+            $quotes_array[] = $quote_item; //Push to array directly
         }
-        // Turn to json
-        echo json_encode($quotes_array);
+    
+        echo json_encode($quotes_array); //Return array, not object
     } else {
-        echo json_encode(array('message'=> 'No Quotes Found'));
+        echo json_encode(array('message' => 'No Quotes Found')); //Return an empty array instead of an object
     }
