@@ -1,33 +1,20 @@
-# Use official PHP Apache image
+# Use an official PHP-Apache image
 FROM php:8.2-apache
 
-# Install required dependencies
-RUN apt-get update && apt-get install -y \
-    libpq-dev \
-    libonig-dev \
-    libzip-dev \
-    unzip \
-    && docker-php-ext-install pdo pdo_pgsql pgsql zip
+# Install required PHP extensions
+RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql
 
-# Enable mod_rewrite for Apache
-RUN a2enmod rewrite
-
-# Set working directory
+# Set the working directory
 WORKDIR /var/www/html
 
-# Copy all project files into the container
+# Copy project files into the container
 COPY . /var/www/html/
 
-# Ensure Apache serves index.php by default
-RUN echo "<IfModule mod_dir.c>\n    DirectoryIndex index.php index.html\n</IfModule>" \
-    > /etc/apache2/mods-enabled/dir.conf
+# Enable Apache mod_rewrite
+RUN a2enmod rewrite
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html
-
-# Expose port 80
+# Expose the correct port
 EXPOSE 80
 
-# Start Apache in the foreground
+# Start Apache
 CMD ["apache2-foreground"]
