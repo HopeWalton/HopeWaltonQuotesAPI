@@ -67,28 +67,23 @@
 
         // Create author
         public function create() {
-            $query = 'INSERT INTO ' . $this->table . '
-                (author) VALUES (:author)
-            ';
-
-            // Prepare Statement
+            $query = 'INSERT INTO ' . $this->table . ' (author) VALUES (:author) RETURNING id';
+        
             $stmt = $this->conn->prepare($query);
-
-            // Clean the data
+        
             $this->author = htmlspecialchars(strip_tags($this->author));
-
-            // Bind data
             $stmt->bindParam(':author', $this->author, PDO::PARAM_STR);
-
-           // Execute query
+        
             if ($stmt->execute()) {
-                // Get the last inserted ID in PostgreSQL
-                $row = $stmt->fetch(PDO::FETCH_ASSOC);
-                return $row['id'];
+                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                if ($result && isset($result['id'])) { // Ensure ID exists
+                    return $result['id'];
+                }
             }
-
+        
             return false;
         }
+        
 
         public function update(){
             $query = 'UPDATE ' . $this->table . '

@@ -25,15 +25,20 @@ try {
 
     $author->author = $data->author;
 
-    if ($author->create()) {
+    // Create Author & Return ID
+    $newId = $author->create(); // This should return the ID from the query
+    if ($newId) {
         echo json_encode([
-            "id" => $db->lastInsertId(),
+            "id" => (int) $newId,  // Force ID to be an integer
             "author" => $author->author
         ]);
+        exit();
     } else {
         echo json_encode(["message" => "Author Not Created"]);
+        exit();
     }
 
 } catch (Exception $e) {
     echo json_encode(["error" => $e->getMessage()]);
+    exit();
 }
