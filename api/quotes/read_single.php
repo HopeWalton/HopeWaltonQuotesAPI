@@ -15,7 +15,7 @@
     // Get the quote
     $quote->read_single();
 
-    if($quote->id !== null) {
+    if(!empty($quote->quote)) {
         $quote_array = [
             'id' => $quote->id,
             'quote' => $quote->quote,
@@ -25,5 +25,5 @@
 
         echo json_encode($quote_array);
     } else {
-        echo json_encode(['message' => 'No Quotes Found']);
+        echo json_encode(["message" => "No Quotes Found"]);
     }

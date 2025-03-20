@@ -3,19 +3,31 @@
 include_once '../../config/Database.php';
 include_once '../../models/Category.php';
 
-// Instantiate DB and Connect
-$database = new Database();
-$db = $database->connect();
+header('Content-Type: application/json');
 
-$category = new Category($db);
+try {
+    $database = new Database();
+    $db = $database->connect();
+    $category = new Category($db);
 
- // Get raw posted data
- $data = json_decode(file_get_contents("php://input"));
+    $data = json_decode(file_get_contents("php://input"));
 
- $category->category = $data->category;
+    if (!isset($data->category)) {
+        echo json_encode(["message" => "Missing Required Parameters"]);
+        exit();
+    }
 
-if($category->create()){
-    echo json_encode(array('message'=>'New Category created!'));
-} else {
-    echo json_encode(array('message'=>'Category not created'));
+    $category->category = $data->category;
+
+    if ($category->create()) {
+        echo json_encode([
+            "id" => $db->lastInsertId(),
+            "category" => $category->category
+        ]);
+    } else {
+        echo json_encode(["message" => "Category Not Created"]);
+    }
+
+} catch (Exception $e) {
+    echo json_encode(["error" => $e->getMessage()]);
 }
