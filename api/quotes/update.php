@@ -1,46 +1,70 @@
 <?php
 
-    include_once '../../config/Database.php';
-    include_once '../../models/Quote.php';
+include_once '../../config/Database.php';
+include_once '../../models/Quote.php';
 
-    // Instantiate DB and Connect
+header('Content-Type: application/json');
+
+try {
     $database = new Database();
     $db = $database->connect();
+    $quote = new Quote($db);
 
-    $quote = new quote($db);
-
-    // Get raw posted data
     $data = json_decode(file_get_contents("php://input"));
 
-    // Ensure all fields are provided
+    // Check for valid JSON input
+    if (!$data) {
+        echo json_encode(["error" => "Invalid JSON input"]);
+        exit();
+    }
+
+    // Ensure all required fields are provided
     if (!isset($data->id) || !isset($data->quote) || !isset($data->author_id) || !isset($data->category_id)) {
-        echo json_encode(['message' => 'Missing Required Parameters']);
+        echo json_encode(["message" => "Missing Required Parameters"]);
         exit();
     }
-    
-    if (!is_numeric($data->id) || !is_numeric($data->author_id) || !is_numeric($data->category_id)) {
-        echo json_encode(['message' => 'Invalid ID']);
-        exit();
-    }
-    
-    // Check if the quote exists before updating
-    $check_query = "SELECT id FROM quotes WHERE id = :id";
-    $stmt = $db->prepare($check_query);
-    $stmt->bindParam(':id', $data->id, PDO::PARAM_INT);
+
+    // Validate if Author ID exists
+    $check_author_query = "SELECT id FROM authors WHERE id = :author_id";
+    $stmt = $db->prepare($check_author_query);
+    $stmt->bindParam(':author_id', $data->author_id, PDO::PARAM_INT);
     $stmt->execute();
     if ($stmt->rowCount() == 0) {
-        die(json_encode(["message" => "No Quotes Found"]));
+        echo json_encode(["message" => "author_id Not Found"]);
+        exit();
     }
-    
-    // Update quote
+
+    // Validate if Category ID exists
+    $check_category_query = "SELECT id FROM categories WHERE id = :category_id";
+    $stmt = $db->prepare($check_category_query);
+    $stmt->bindParam(':category_id', $data->category_id, PDO::PARAM_INT);
+    $stmt->execute();
+    if ($stmt->rowCount() == 0) {
+        echo json_encode(["message" => "category_id Not Found"]);
+        exit();
+    }
+
+    // Assign Data to Quote Object
+    $quote->id = $data->id;
+    $quote->quote = $data->quote;
+    $quote->author_id = $data->author_id;
+    $quote->category_id = $data->category_id;
+
+    // Perform Update
     if ($quote->update()) {
         echo json_encode([
-            'id' => $quote->id,
-            'quote' => $quote->quote,
-            'author_id' => $quote->author_id,
-            'category_id' => $quote->category_id
+            "id" => (int) $quote->id,
+            "quote" => $quote->quote,
+            "author_id" => (int) $quote->author_id,
+            "category_id" => (int) $quote->category_id
         ]);
+        exit();
     } else {
-        echo json_encode(['message' => 'Quote Not Updated']);
+        echo json_encode(["message" => "Quote Not Updated"]);
+        exit();
     }
-    
+
+} catch (Exception $e) {
+    echo json_encode(["error" => $e->getMessage()]);
+    exit();
+}

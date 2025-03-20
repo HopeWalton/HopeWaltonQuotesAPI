@@ -127,35 +127,32 @@ class Quote {
         
 
         public function update() {
-            $query = 'UPDATE ' . $this->table . ' 
-            SET quote = :quote, author_id = :author_id, category_id = :category_id 
-                  WHERE id = :id';
-
-            // Prepare Statement
-            $stmt = $this->conn->prepare($query);
-
-            // Clean Data
-            $this->id = htmlspecialchars(strip_tags($this->id));
-            $this->quote = htmlspecialchars(strip_tags($this->quote));
-            $this->author_id = htmlspecialchars(strip_tags($this->author_id));
-            $this->category_id = htmlspecialchars(strip_tags($this->category_id));
-
-            // Bind Data
-            $stmt->bindParam(':id', $this->id);
-            $stmt->bindParam(':quote', $this->quote, PDO::PARAM_STR);
-            $stmt->bindParam(':author_id', $this->author_id, PDO::PARAM_STR);
-            $stmt->bindParam(':category_id', $this->category_id, PDO::PARAM_STR);
-
-            // Execute
-            if($stmt->execute()) {
-                return true;
-            } else {
-                //Print error if something goes wrong
-                printf("Error: %s.\n", $stmt->error);
+                $query = 'UPDATE ' . $this->table . ' 
+                          SET quote = :quote, author_id = :author_id, category_id = :category_id 
+                          WHERE id = :id';
+            
+                $stmt = $this->conn->prepare($query);
+            
+                // Clean data
+                $this->quote = htmlspecialchars(strip_tags($this->quote));
+                $this->author_id = htmlspecialchars(strip_tags($this->author_id));
+                $this->category_id = htmlspecialchars(strip_tags($this->category_id));
+                $this->id = htmlspecialchars(strip_tags($this->id));
+            
+                // Bind data
+                $stmt->bindParam(':quote', $this->quote, PDO::PARAM_STR);
+                $stmt->bindParam(':author_id', $this->author_id, PDO::PARAM_INT);
+                $stmt->bindParam(':category_id', $this->category_id, PDO::PARAM_INT);
+                $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
+            
+                if ($stmt->execute()) {
+                    return true;
+                }
+            
                 return false;
             }
-        }
 
+            
         public function delete() {
             try {
                 $query = 'DELETE FROM ' . $this->table . ' WHERE id = :id';
