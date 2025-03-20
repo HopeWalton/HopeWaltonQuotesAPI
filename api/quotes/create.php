@@ -57,7 +57,6 @@ try {
             exit();
         }
     
-        // Ensure correct response format
         echo json_encode([
             "id" => (int) $newId,  
             "quote" => $quote->quote,
@@ -65,7 +64,8 @@ try {
             "category_id" => (int) $quote->category_id
         ]);
         exit();
-    } else {
+    }
+     else {
         echo json_encode(["message" => "Quote Not Created"]);
     }
 
