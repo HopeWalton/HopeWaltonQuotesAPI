@@ -12,6 +12,12 @@ try {
 
     $data = json_decode(file_get_contents("php://input"));
 
+    // Debugging log
+    if (!$data) {
+        echo json_encode(["error" => "Invalid JSON input"]);
+        exit();
+    }
+
     if (!isset($data->author)) {
         echo json_encode(["message" => "Missing Required Parameters"]);
         exit();
